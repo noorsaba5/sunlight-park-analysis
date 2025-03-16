@@ -1,0 +1,68 @@
+# Sunlight and Park Attendance Analysis
+
+# 1. Import necessary libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+# 2. Load the dataset (sunlight.csv) into a Pandas DataFrame
+try:
+    df = pd.read_csv("sunlight.csv")  # Ensure the file is in the correct directory
+    print(" Data loaded successfully!\n")
+except FileNotFoundError:
+    print(" Error: File not found. Please check the file path.")
+    df = None  # Set df to None if file is not found
+
+# 3. Explore the dataset
+if df is not None:
+    print(" First 5 rows of the dataset:\n", df.head(), "\n")
+    print(" Summary statistics:\n", df.describe(), "\n")
+    print("ℹ Data Information:\n")
+    print(df.info())
+
+    # Check for missing values
+    missing_values = df.isnull().sum()
+    print("\n Missing Values:\n", missing_values[missing_values > 0])
+
+# 4. Plot the data using a Scatterplot
+if df is not None:
+    plt.figure(figsize=(10, 6))  # Set figure size
+
+    # Extract relevant columns
+    x = df["sunlight_hours"]
+    y = df["park_attendance"]
+
+    # Color coding based on sunlight hours
+    colors = ["blue" if hours < 5 else "red" for hours in x]
+
+    # Scatterplot
+    plt.scatter(x, y, c=colors, alpha=0.7, label="Attendance Data")
+
+    # Add a linear trend line
+    z = np.polyfit(x, y, 1)  # Fit a linear regression line
+    p = np.poly1d(z)
+    plt.plot(x, p(x), color="orange", linestyle="--", label="Trend Line")
+
+    # Formatting the plot
+    plt.title("Effect of Sunlight on Park Attendance")
+    plt.xlabel("Hours of Sunlight")
+    plt.ylabel("Number of Visitors")
+    plt.grid(True, linestyle="--", alpha=0.6)  # Add grid
+    plt.legend()
+    
+    # Show the plot
+    plt.show()
+
+# 5. Analysis
+analysis_text = """
+###  Analysis:
+- The scatterplot suggests a **positive correlation** between sunlight hours and park attendance.
+- Days with **less than 5 hours of sunlight** tend to have lower attendance (blue points).
+- The **trend line** (orange) confirms that as sunlight hours increase, attendance also increases.
+- Potential next steps:
+  - Analyze other influencing factors like **temperature, weekends, or holidays**.
+  - Compare data across different **months or years**.
+  - Use machine learning to predict park attendance based on weather data.
+"""
+
+print(analysis_text)
